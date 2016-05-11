@@ -1,18 +1,22 @@
 ﻿var https = require('https');
 var http = require('http');
+var APIkey = '1d74d695958f587d70e6cfee95d69210';
 
 
-function printMsg(username, badge, points) {
-  console.log('Name: ' + username + ' - Badges: ' + badge + ' - Points: ' + points);
+function printMsg(name, weather) {
+  console.log('The weather in ' + name + ' is ' + weather);
 }
 
 function printError(response) {
   console.error(response.message);
 }
 
-function getProfile(username) {
+// api.openweathermap.org/data/2.5/forecast/city?id=524901&APPID=1d74d695958f587d70e6cfee95d69210
+// http://api.openweathermap.org/data/2.5/forecast/daily?q=London&APPID=1d74d695958f587d70e6cfee95d69210
 
-  var request = https.get('https://teamtreehouse.com/' + username + '.json', function(response){
+function getProfile(id) {
+
+  var request = http.get('http://api.openweathermap.org/data/2.5/forecast/daily?q=' + id + '&APPID=' + APIkey, function(response){
     var body = '';
     response.setEncoding('utf8');
     response.on('data', function(CHUNK) {
@@ -22,7 +26,7 @@ function getProfile(username) {
       if(response.statusCode === 200) {
         try {
           var parsed = JSON.parse(body);
-          printMsg(parsed.name, parsed.badges.length, parsed.points.total);
+          printMsg(parsed.city.name, parsed.list[1].weather[0].description);
         } catch(error) {
           printError(error);
         }
